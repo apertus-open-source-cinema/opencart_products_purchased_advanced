@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="utf-8"?>
+<modification>
+	<name>Advanced Purchased Products Report</name>
+	<version>1.0</version>
+	<author>Sebastian Pichelhofer</author>
+	<code>AdvancedPurchasedProductsReport1.0</code>
+	<description>Advanced reports about purchased products</description>
+  	<file path="admin/view/template/common/menu.tpl">
+		<operation>
+			<comment>Add link in menu</comment>
+			<search regex="false">
+				<![CDATA[
+					<li><a href="<?php echo $report_product_purchased; ?>"><?php echo $text_report_product_purchased; ?></a></li>
+				]]>
+			</search>
+			<add position="after">
+				<![CDATA[
+         			 <li><a href="<?php echo $report_product_purchased_advanced; ?>"><?php echo $text_report_product_purchased_advanced; ?></a></li>
+				]]>
+			</add>
+		</operation>
+	</file>
+  	<file path="admin/language/english/common/menu.php">
+		<operation>
+			<comment>Add Country language entry</comment>
+			<search regex="false">
+				<![CDATA[
+					$_['text_paypal_search']               = 'Search';
+				]]>
+			</search>
+			<add position="after">
+				<![CDATA[
+					$_['text_report_product_purchased_advanced']      = 'Advanced Purchased';
+				]]>
+			</add>
+		</operation>
+	</file>
+    <file path="admin/controller/common/menu.php">
+		<operation>
+			<comment>set language strings/links</comment>
+			<search regex="false">
+				<![CDATA[
+					$data['text_openbay_order_import'] = $this->language->get('text_openbay_order_import');
+				]]>
+			</search>
+			<add position="after">
+				<![CDATA[
+					$data['text_report_product_purchased_advanced'] = $this->language->get('text_report_product_purchased_advanced');
+					$data['report_product_purchased_advanced'] = $this->url->link('report/product_purchased_advanced', 'token=' . $this->session->data['token'], 'SSL');
+				]]>
+			</add>
+		</operation>
+	</file>
+    <file path="admin/model/report/product.php">
+		<operation>
+			<search regex="false">
+				<![CDATA[
+						public function getPurchased($data = array()) {
+				]]>
+			</search>
+			<add position="before">
+				<![CDATA[
+					public function getPurchasedAdvanced($data = array()) {
+		if (empty($data['filter_product_id'])) {
+			$sql = "SELECT op.product_id as product_id, CONCAT(o.payment_firstname, ' ', o.payment_lastname) AS customer, op.name, op.model, 
+			SUM(op.quantity) AS quantity, SUM((op.total + op.tax) * op.quantity) AS total FROM " . DB_PREFIX . "order_product op 
+			LEFT JOIN `" . DB_PREFIX . "order` o ON (op.order_id = o.order_id)";
+		} else {
+			// single product
+			$sql = "SELECT op.quantity as quantity, ((op.total + op.tax) * op.quantity) AS total, o.order_id as order_id, op.product_id as product_id, CONCAT(o.payment_firstname, ' ', o.payment_lastname) AS customer, 
+			o.email as email, o.date_added as order_date, o.payment_country as country, op.name, op.model FROM " . DB_PREFIX . "order_product op 
+			LEFT JOIN `" . DB_PREFIX . "order` o ON (op.order_id = o.order_id)";
+		}
+		
+		if (empty($data['filter_order_status_id'])) {
+			$sql .= " WHERE o.order_status_id > '0'";
+		} else {
+			// single product
+			$sql .= " WHERE o.order_status_id = '" . (int)$data['filter_order_status_id'] . "'";
+		}
+		
+		if (!empty($data['filter_product_id'])) {
+			$sql .= " AND op.product_id='" . $data['filter_product_id'] . "'";
+		} 
+
+		if (!empty($data['filter_date_start'])) {
+			$sql .= " AND DATE(o.date_added) >= '" . $this->db->escape($data['filter_date_start']) . "'";
+		}
+
+		if (!empty($data['filter_date_end'])) {
+			$sql .= " AND DATE(o.date_added) <= '" . $this->db->escape($data['filter_date_end']) . "'";
+		}
+		
+		if (empty($data['filter_product_id'])) {
+			$sql .= " GROUP BY op.product_id ORDER BY total DESC";
+		} else {
+			$sql .= " ORDER BY order_date DESC";
+		}
+
+		if (isset($data['start']) || isset($data['limit'])) {
+			if ($data['start'] < 0) {
+				$data['start'] = 0;
+			}
+
+			if ($data['limit'] < 1) {
+				$data['limit'] = 20;
+			}
+
+			$sql .= " LIMIT " . (int)$data['start'] . "," . (int)$data['limit'];
+		}
+
+		$query = $this->db->query($sql);
+
+		return $query->rows;
+	}
+				]]>
+			</add>
+		</operation>
+	</file>  
+  
+  
+	<file path="admin/controller/report/product_purchased.php">
+		<operation>
+			<notes></notes>
+			<search trim="false" regex="false" index="0"><![CDATA[if (isset($this->request->get['page'])) {]]></search>
+			<add position="before" trim="false" offset="0"><![CDATA[		if (isset($this->request->get['filter_product_id'])) {
+			$filter_product_id = $this->request->get['filter_product_id'];
+		} else {
+			$filter_product_id = "";
+		}
+	  ]]></add>
+		</operation>
+	
+		<operation>
+			<notes></notes>
+			<search trim="false" regex="false" index="1"><![CDATA[if (isset($this->request->get['page'])) {]]></search>
+			<add position="before" trim="false" offset="0"><![CDATA[		
+			if (isset($this->request->get['filter_product_id'])) {
+				$url .= '&filter_product_id=' . $this->request->get['filter_product_id'];
+			}
+		
+	  ]]></add>
+		</operation>
+	
+		<operation>
+			<notes></notes>
+			<search trim="true" regex="false" index="0"><![CDATA['filter_order_status_id' => $filter_order_status_id,]]></search>
+			<add position="after" trim="false" offset="0"><![CDATA[		
+			'filter_product_id'  => $filter_product_id,
+		
+	  ]]></add>
+		</operation>
+	
+		<operation>
+			<notes></notes>
+			<search trim="true"><![CDATA[$data['products'][] = array(
+				'name'       => $result['name'],
+				'model'      => $result['model'],
+				'quantity'   => $result['quantity'],
+				'total'      => $this->currency->format($result['total'], $this->config->get('config_currency'))
+			);]]></search>
+			<add position="replace" ><![CDATA[
+			if (!empty($filter_product_id)) {
+				// single product
+				$data['products'][] = array(
+					'name'       => $result['name'],
+					'email'      => $result['email'],
+					'country'    => $result['country'],
+					'order_date' => date($this->language->get('datetime_format'), strtotime($result['order_date'])),
+					'order_id' => $result['order_id'],
+					'quantity' => $result['quantity'],
+					'total' => $this->currency->format($result['total'], $this->config->get('config_currency')),
+					'model'      => $result['model'],
+					'customer'   => $result['customer'],
+					'product_id' => $result['product_id']
+				);
+			} else {
+				$data['products'][] = array(
+					'name'       => $result['name'],
+					'model'      => $result['model'],
+					'product_id' => $result['product_id'],
+					'quantity'   => $result['quantity'],
+					'total'      => $this->currency->format($result['total'], $this->config->get('config_currency'))
+				);
+		}]]></add>
+		</operation>
+	
+		<operation>
+			<notes></notes>
+			<search trim="false" regex="false" index="0"><![CDATA[$data['filter_order_status_id'] = $filter_order_status_id;]]></search>
+			<add position="after" trim="false" offset="0"><![CDATA[		$data['filter_product_id'] = $filter_product_id;]]></add>
+		</operation>
+	
+		<operation>
+			<notes></notes>
+			<search trim="false" regex="false" index="0"><![CDATA[$pagination = new Pagination();]]></search>
+			<add position="before" trim="false" offset="0"><![CDATA[		if (isset($this->request->get['filter_product_id'])) {
+			$url .= '&filter_product_id=' . $this->request->get['filter_product_id'];
+		}
+	  ]]></add>
+		</operation>
+	</file>
+</modification>
