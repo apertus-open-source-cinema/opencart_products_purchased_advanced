@@ -59,7 +59,6 @@ class ControllerReportProductPurchasedAdvanced extends Controller {
 		}
 		
 		
-
 		$data['breadcrumbs'] = array();
 
 		$data['breadcrumbs'][] = array(
@@ -102,6 +101,7 @@ class ControllerReportProductPurchasedAdvanced extends Controller {
 					'country'    => $result['country'],
 					'order_date' => date($this->language->get('datetime_format'), strtotime($result['order_date'])),
 					'order_id' => $result['order_id'],
+					'order_status' => $result['order_status'],
 					'quantity' => $result['quantity'],
 					'total' => $this->currency->format($result['total'], $this->config->get('config_currency')),
 					'model'      => $result['model'],
@@ -126,9 +126,14 @@ class ControllerReportProductPurchasedAdvanced extends Controller {
 		$data['text_confirm'] = $this->language->get('text_confirm');
 		$data['text_all_status'] = $this->language->get('text_all_status');
 
-		$data['column_name'] = $this->language->get('column_name');
+		$data['column_customer_name'] = $this->language->get('column_customer_name');
+		$data['column_product_name'] = $this->language->get('column_product_name');
+		$data['column_email'] = $this->language->get('column_email');
+		$data['column_country'] = $this->language->get('column_country');
 		$data['column_model'] = $this->language->get('column_model');
 		$data['column_quantity'] = $this->language->get('column_quantity');
+		$data['column_order_date'] = $this->language->get('column_order_date');
+		$data['column_order_status'] = $this->language->get('column_order_status');
 		$data['column_total'] = $this->language->get('column_total');
 
 		$data['entry_date_start'] = $this->language->get('entry_date_start');

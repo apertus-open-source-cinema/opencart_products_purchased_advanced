@@ -59,17 +59,18 @@
             <thead>
               <tr>
 			    <?php if ($filter_product_id == "") { ?>
-					<td class="text-left"><?php echo $column_name; ?></td>
+					<td class="text-left"><?php echo $column_product_name; ?></td>
 					<td class="text-left"><?php echo $column_model; ?></td>
 					<td class="text-right"><?php echo $column_quantity; ?></td>
 					<td class="text-right"><?php echo $column_total; ?></td>
 				<?php } else { ?>
-					<td class="text-left">Customer Name</td>
-					<td class="text-left">Customer Email</td>
-					<td class="text-right">Country</td>
-					<td class="text-right">Order Date</td>
-					<td class="text-right">Quantity</td>
-					<td class="text-right">Total</td>
+					<td class="text-left"><?php echo $column_customer_name; ?></td>
+					<td class="text-left"><?php echo $column_email; ?></td>
+					<td class="text-right"><?php echo $column_country; ?></td>
+					<td class="text-right"><?php echo $column_order_status; ?></td>
+					<td class="text-right"><?php echo $column_order_date; ?></td>
+					<td class="text-right"><?php echo $column_quantity; ?></td>
+					<td class="text-right"><?php echo $column_total; ?></td>
 				<?php } ?>
               </tr>
             </thead>
@@ -86,8 +87,8 @@
 					$back_url .= "&filter_order_status_id=".$filter_order_status_id;	
 					
 				?>
-				    <tr><td class="text-left" colspan="6"><a class="btn btn-info" href="<?php echo $back_url; ?>"><i class="fa fa-arrow-left"></i> BACK</a></td></tr>
-				  	<tr><td style="background-color:#f5f5f5; padding-top:15px; padding-left:15px;" class="text-left" colspan="6"><h3><i class="fa fa-cubes"></i> <?php echo $products[0]['name']; ?></h3></td>
+				    <tr><td class="text-left" colspan="7"><a class="btn btn-info" href="<?php echo $back_url; ?>"><i class="fa fa-arrow-left"></i> BACK</a></td></tr>
+				  	<tr><td style="background-color:#f5f5f5; padding-top:15px; padding-left:15px;" class="text-left" colspan="7"><h3><i class="fa fa-cubes"></i> <?php echo $products[0]['name']; ?></h3></td>
               <?php }  ?>
               <?php foreach ($products as $product) { ?>
               <tr>
@@ -99,6 +100,7 @@
 					</td>
 					<td class="text-left"><?php echo $product['email']; ?></td>
 					<td class="text-right"><?php echo $product['country']; ?></td>
+					<td class="text-right"><?php echo $product['order_status']; ?></td>
 					<td class="text-right"><?php echo $product['order_date']; ?></td>
 					<td class="text-right"><?php echo $product['quantity']; ?></td>
 					<td class="text-right"><?php echo $product['total']; ?></td>
@@ -121,7 +123,7 @@
               <?php } ?>
               <?php } else { ?>
               <tr>
-                <td class="text-center" colspan="4"><?php echo $text_no_results; ?></td>
+                <td class="text-center" colspan="7"><?php echo $text_no_results; ?></td>
               </tr>
               <?php } ?>
             </tbody>
