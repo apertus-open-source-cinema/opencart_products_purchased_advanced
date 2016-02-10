@@ -5,6 +5,7 @@
 	<author>Sebastian Pichelhofer</author>
 	<code>AdvancedPurchasedProductsReport1.0</code>
 	<description>Advanced reports about purchased products</description>
+	<link>https://github.com/apertus-open-source-cinema/opencart_products_purchased_advanced</link>
   	<file path="admin/view/template/common/menu.tpl">
 		<operation>
 			<comment>Add link in menu</comment>
@@ -117,87 +118,4 @@
 			</add>
 		</operation>
 	</file>  
-  
-  
-	<file path="admin/controller/report/product_purchased.php">
-		<operation>
-			<notes></notes>
-			<search trim="false" regex="false" index="0"><![CDATA[if (isset($this->request->get['page'])) {]]></search>
-			<add position="before" trim="false" offset="0"><![CDATA[		if (isset($this->request->get['filter_product_id'])) {
-			$filter_product_id = $this->request->get['filter_product_id'];
-		} else {
-			$filter_product_id = "";
-		}
-	  ]]></add>
-		</operation>
-	
-		<operation>
-			<notes></notes>
-			<search trim="false" regex="false" index="1"><![CDATA[if (isset($this->request->get['page'])) {]]></search>
-			<add position="before" trim="false" offset="0"><![CDATA[		
-			if (isset($this->request->get['filter_product_id'])) {
-				$url .= '&filter_product_id=' . $this->request->get['filter_product_id'];
-			}
-		
-	  ]]></add>
-		</operation>
-	
-		<operation>
-			<notes></notes>
-			<search trim="true" regex="false" index="0"><![CDATA['filter_order_status_id' => $filter_order_status_id,]]></search>
-			<add position="after" trim="false" offset="0"><![CDATA[		
-			'filter_product_id'  => $filter_product_id,
-		
-	  ]]></add>
-		</operation>
-	
-		<operation>
-			<notes></notes>
-			<search trim="true"><![CDATA[$data['products'][] = array(
-				'name'       => $result['name'],
-				'model'      => $result['model'],
-				'quantity'   => $result['quantity'],
-				'total'      => $this->currency->format($result['total'], $this->config->get('config_currency'))
-			);]]></search>
-			<add position="replace" ><![CDATA[
-			if (!empty($filter_product_id)) {
-				// single product
-				$data['products'][] = array(
-					'name'       => $result['name'],
-					'email'      => $result['email'],
-					'country'    => $result['country'],
-					'order_date' => date($this->language->get('datetime_format'), strtotime($result['order_date'])),
-					'order_id' => $result['order_id'],
-					'quantity' => $result['quantity'],
-					'total' => $this->currency->format($result['total'], $this->config->get('config_currency')),
-					'model'      => $result['model'],
-					'customer'   => $result['customer'],
-					'product_id' => $result['product_id']
-				);
-			} else {
-				$data['products'][] = array(
-					'name'       => $result['name'],
-					'model'      => $result['model'],
-					'product_id' => $result['product_id'],
-					'quantity'   => $result['quantity'],
-					'total'      => $this->currency->format($result['total'], $this->config->get('config_currency'))
-				);
-		}]]></add>
-		</operation>
-	
-		<operation>
-			<notes></notes>
-			<search trim="false" regex="false" index="0"><![CDATA[$data['filter_order_status_id'] = $filter_order_status_id;]]></search>
-			<add position="after" trim="false" offset="0"><![CDATA[		$data['filter_product_id'] = $filter_product_id;]]></add>
-		</operation>
-	
-		<operation>
-			<notes></notes>
-			<search trim="false" regex="false" index="0"><![CDATA[$pagination = new Pagination();]]></search>
-			<add position="before" trim="false" offset="0"><![CDATA[		if (isset($this->request->get['filter_product_id'])) {
-			$url .= '&filter_product_id=' . $this->request->get['filter_product_id'];
-		}
-	  ]]></add>
-		</operation>
-	</file>
 </modification>

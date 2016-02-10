@@ -69,7 +69,7 @@ class ControllerReportProductPurchasedAdvanced extends Controller {
 
 		$data['breadcrumbs'][] = array(
 			'text' => $this->language->get('heading_title'),
-			'href' => $this->url->link('report/product_purchased', 'token=' . $this->session->data['token'] . $url, 'SSL')
+			'href' => $this->url->link('report/product_purchased_advanced', 'token=' . $this->session->data['token'] . $url, 'SSL')
 		);
 
 		$this->load->model('report/product');
@@ -166,7 +166,7 @@ class ControllerReportProductPurchasedAdvanced extends Controller {
 		$pagination->total = $product_total;
 		$pagination->page = $page;
 		$pagination->limit = $this->config->get('config_limit_admin');
-		$pagination->url = $this->url->link('report/product_purchased', 'token=' . $this->session->data['token'] . $url . '&page={page}', 'SSL');
+		$pagination->url = $this->url->link('report/product_purchased_advanced', 'token=' . $this->session->data['token'] . $url . '&page={page}', 'SSL');
 
 		$data['pagination'] = $pagination->render();
 
@@ -181,6 +181,6 @@ class ControllerReportProductPurchasedAdvanced extends Controller {
 		$data['column_left'] = $this->load->controller('common/column_left');
 		$data['footer'] = $this->load->controller('common/footer');
 
-		$this->response->setOutput($this->load->view('report/product_purchased.tpl', $data));
+		$this->response->setOutput($this->load->view('report/product_purchased_advanced.tpl', $data));
 	}
 }

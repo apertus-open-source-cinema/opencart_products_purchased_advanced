@@ -77,7 +77,7 @@
               <?php if ($products) { ?>
 			  <?php if ($filter_product_id != "") { ?>
 			  <?php
-				$back_url = "index.php?route=report/product_purchased&token=".$token;
+				$back_url = "index.php?route=report/product_purchased_advanced&token=".$token;
 				if ($filter_date_start != "")
 					$back_url .= "&filter_date_start=".$filter_date_start;
 				if ($filter_date_end != "")
@@ -104,7 +104,7 @@
 					<td class="text-right"><?php echo $product['total']; ?></td>
                 <?php } else { ?>
 					<?php
-					$product_url = "index.php?route=report/product_purchased&token=".$token."&filter_product_id=".$product['product_id'];
+					$product_url = "index.php?route=report/product_purchased_advanced&token=".$token."&filter_product_id=".$product['product_id'];
 					if ($filter_date_start != "")
 						$product_url .= "&filter_date_start=".$filter_date_start;
 					if ($filter_date_end != "")
@@ -137,9 +137,9 @@
   <script type="text/javascript"><!--
 $('#button-filter').on('click', function() {
 	<?php if(isset($product['product_id'])) { ?>
-		url = 'index.php?route=report/product_purchased&token=<?php echo $token; ?>&filter_product_id=<?php echo $product['product_id'] ?>';
+		url = 'index.php?route=report/product_purchased_advanced&token=<?php echo $token; ?>&filter_product_id=<?php echo $product['product_id'] ?>';
 	<?php }	else { ?>
-		url = 'index.php?route=report/product_purchased&token=<?php echo $token; ?>';
+		url = 'index.php?route=report/product_purchased_advanced&token=<?php echo $token; ?>';
 	<?php } ?>
 	var filter_date_start = $('input[name=\'filter_date_start\']').val();
 	
